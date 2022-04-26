@@ -1,0 +1,69 @@
+# [package]
+# name ="ProjectRoot"
+# version= "1.0.0"
+# author="Nabeel Ahmed"
+# edition="2021"
+
+# # [dependencies]
+# # near-sdk = "4.0.0-pre.6"
+
+# [dev-dependencies]
+# near-sdk = "4.0.0-pre.6"
+# near-sdk-sim = "4.0.0-pre.6"
+# # remember to include a line for each contract
+# fungible-token = { path = "./ft" }
+# # ft-bkrt-contract= {path= "./fungible-token-contract"}
+# # staking-bkrt-contract= {path="./staking-contract"}
+
+# # [lib]
+# # crate-type= ["cdylib","rlib"]
+# # path="/src/lib.rs"
+
+# [profile.release]
+# codegen-units=24
+# opt-level = "z"
+# lto = true
+# debug = false
+# panic = "abort"
+# overflow-checks = true
+
+# [workspace]
+# # remember to include a member for each contract
+# members=[
+#     "ft",
+#     # "fungible-token-contract",
+#     # "staking-contract",
+# ]
+[package]
+name = "fungible-token-wrapper"
+version = "0.0.1"
+authors = ["Near Inc <hello@near.org>"]
+edition = "2021"
+
+[dev-dependencies]
+near-sdk = "4.0.0-pre.6"
+near-sdk-sim = "4.0.0-pre.6"
+
+# remember to include a line for each contract
+
+ft-bkrt-contract= {path= "./fungible-token-contract"}
+staking-bkrt-contract= {path="./staking-contract"}
+
+
+[profile.release]
+codegen-units = 1
+# Tell `rustc` to optimize for small code size.
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+
+[workspace]
+# remember to include a member for each contract
+members = [
+ 
+  "fungible-token-contract",
+  "staking-contract",
+  
+]
