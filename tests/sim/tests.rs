@@ -1,7 +1,7 @@
 use near_sdk::json_types::U128;
 use near_sdk::serde_json::json;
-use near_sdk_sim::{call, to_yocto, view, DEFAULT_GAS};
-// use staking_bkrt_contract::Stake;
+use near_sdk_sim::{call, to_yocto, transaction::ExecutionStatus, view, ViewResult, DEFAULT_GAS};
+use staking_bkrt_contract::Stake;
 use std::{thread, time};
 
 use crate::utils::{init, register_user};
@@ -42,34 +42,11 @@ pub fn stimulate_staking_fungible_tokens() {
     let (root, ft, staking, alice) = init(initial_balance);
 
     register_user(&staking.user_account);
-    // let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    // println!("Root account balance {:?}", root_balance);
+
     //===> With Macro<========//
-    // call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
-    // deposit =1).assert_success();
-    //===> Without Macro<========//
-    let outcome = root
-        .create_transaction(ft.account_id())
-        .function_call(
-            "ft_transfer_call".to_string(),
-            json!({
-                "receiver_id": staking.account_id(),
-                "amount": amount.to_string(),
-                "msg": "{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"root\",\"staked_by\":\"root\",\"decimal\":24,\"duration\":145}"
-              })
-            .to_string()
-            .into_bytes(),
-            DEFAULT_GAS / 2,
-            1,
-        )
-    .function_call(
-        "storage_unregister".to_string(),
-        json!({"force":true}).to_string().into_bytes(),
-        DEFAULT_GAS / 2,
-        1,
-    )
-    .submit();
-    println!(" outcome.....{:?}", outcome.receipt_ids());
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1);
+    assert!(res.is_ok());
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
     let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
@@ -89,7 +66,7 @@ pub fn stimulate_get_staking_history() {
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
     println!("Root account balance {:?}", root_balance);
     //===>With Macro<========//
-    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1).assert_success();
+    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1).assert_success();
     //===> Without Macro<========//
     // let outcome = root
     //     .create_transaction(ft.account_id())
@@ -118,12 +95,14 @@ pub fn stimulate_get_staking_history() {
     let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
     println!("staking_balance {:?}", staking_balance);
 
-    assert_eq!(initial_balance - amount, root_balance.0);
-    assert_eq!(amount, staking_balance.0);
+    // assert_eq!(initial_balance - amount, root_balance.0);
+    // assert_eq!(amount, staking_balance.0);
 
-    let staking_history =
-        view!(staking.get_staking_history(root.account_id(), None, None)).unwrap_json_value();
-    // let staking_history = view!(staking.get_staking_history(root.account_id(), None, None));
+    // let staking_history: Vec<Stake> =
+    //     view!(staking.get_staking_history(root.account_id(), None, None)).unwrap_json();
+    let id = root.account_id();
+    println!("Id : {}", id);
+    let staking_history = view!(staking.get_staking_history(root.account_id(), None, None));
 
     println!("stake history = {:?}", staking_history);
 }
@@ -177,6 +156,7 @@ pub fn stimulate_unstake_fungible_token() {
     assert_eq!(amount, _alice_balance.0);
 }
 #[test]
+#[should_panic(expected = "Reward can be claimed after staking for 30 days")]
 pub fn stimulate_claim_reward() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
@@ -228,28 +208,104 @@ pub fn stimulate_claim_reward() {
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
     println!("Alice balance After Unstake = {:?}", _alice_balance);
 }
+
 #[test]
-#[should_panic]
-pub fn stimulate_staking_fungible_tokens_should_fail_with_less_than_4000_tokens() {
+pub fn Check_Minimum_Limit() {
     let amount = to_yocto("3000");
     let initial_balance = to_yocto("3000");
     let (root, ft, staking, alice) = init(initial_balance);
 
     register_user(&staking.user_account);
-    // let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    // println!("Root account balance {:?}", root_balance);
+
     //===> With Macro<========//
-    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
-    deposit =1).assert_success();
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1);
+    assert!(res.is_ok());
 
-    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
-    println!("staking_balance {:?}", staking_balance);
-
-    assert_eq!(initial_balance - amount, root_balance.0);
-    assert_eq!(amount, staking_balance.0);
+    if let ExecutionStatus::Failure(execution_error) =
+        &res.promise_errors().remove(0).unwrap().outcome().status
+    {
+        assert!(execution_error
+            .to_string()
+            .contains("Cannot stake less than 5000000000000000000000000000 tokens"));
+    } else {
+        unreachable!();
+    }
+    println!("promise error starts{:#?}", res.promise_errors());
 }
 
+#[test]
+pub fn Check_Min_Staking_Duration() {
+    let amount = to_yocto("6000");
+    let initial_balance = to_yocto("6000");
+    let (root, ft, staking, alice) = init(initial_balance);
+
+    register_user(&staking.user_account);
+
+    //===> With Macro<========//
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1);
+    assert!(res.is_ok());
+
+    if let ExecutionStatus::Failure(execution_error) =
+        &res.promise_errors().remove(0).unwrap().outcome().status
+    {
+        assert!(execution_error.to_string().contains("Invalid Duration"));
+    } else {
+        unreachable!();
+    }
+    println!("promise error starts{:#?}", res.promise_errors());
+}
+
+#[test]
+pub fn Check_Invalid_Staking_Arguments() {
+    let amount = to_yocto("6000");
+    let initial_balance = to_yocto("6000");
+    let (root, ft, staking, alice) = init(initial_balance);
+
+    register_user(&staking.user_account);
+
+    //===> With Macro<========//
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_\":\"ft\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1);
+    assert!(res.is_ok());
+
+    if let ExecutionStatus::Failure(execution_error) =
+        &res.promise_errors().remove(0).unwrap().outcome().status
+    {
+        assert!(execution_error
+            .to_string()
+            .contains("Invalid Staking Argument"));
+    } else {
+        unreachable!();
+    }
+    println!("promise error starts{:#?}", res.promise_errors());
+}
+
+#[test]
+pub fn Check_Approved_FT_Tokens() {
+    let amount = to_yocto("6000");
+    let initial_balance = to_yocto("6000");
+    let (root, ft, staking, alice) = init(initial_balance);
+
+    register_user(&staking.user_account);
+
+    //===> With Macro<========//
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_\":\"ftt\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1);
+    assert!(res.is_ok());
+
+    if let ExecutionStatus::Failure(execution_error) =
+        &res.promise_errors().remove(0).unwrap().outcome().status
+    {
+        assert!(execution_error
+            .to_string()
+            .contains("Only approved FT can be staked"));
+    } else {
+        unreachable!();
+    }
+    println!("promise error starts{:#?}", res.promise_errors());
+}
 #[test]
 // #[should_panic]
 pub fn stimulate_staking_fungible_tokens_should_fail_only_approved_FTs_can_be_staked() {
