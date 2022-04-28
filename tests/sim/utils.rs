@@ -1,34 +1,17 @@
 use ft_bkrt_contract::ContractContract as FungibleContract;
-// use near_contract_standards::fungible_token::*
 use near_sdk::json_types::U128;
-use near_sdk::near_bindgen;
-use near_sdk::{serde_json::json, AccountId};
-use near_sdk_sim::{
-    deploy, init_simulator, to_yocto, ContractAccount, UserAccount, DEFAULT_GAS, STORAGE_AMOUNT,
-};
+use near_sdk::serde_json::json;
+use near_sdk_sim::{deploy, init_simulator, to_yocto, ContractAccount, UserAccount};
 use staking_bkrt_contract::ContractContract;
 use staking_bkrt_contract::{APY, FT};
-use std::collections::HashMap;
-// pub type APYKey = String;
-// #[near_bindgen]
-// pub struct APY {
-//     pub apy_key: APYKey,
-//     pub interest_rate: u16, // interest Ex 1000 for 10%
-//     pub min_staking_amt: U128,
-//     pub min_duration: u8, //in months Ex 6
-//     pub plan_name: String,
-// }
-// #[near_bindgen]
-// pub struct FT {
-//     account_id: AccountId,
-//     symbol: String,
-//     apy_against_duration: Option<HashMap<APYKey, APY>>,
-// }
 
 near_sdk_sim::lazy_static_include::lazy_static_include_bytes! {
     // update `contract.wasm` for your contract's name
     CONTRACT_WASM_BYTES => "target/wasm32-unknown-unknown/release/ft_bkrt_contract.wasm",
     STAKING_WASM_BYTES => "target/wasm32-unknown-unknown/release/staking_bkrt_contract.wasm",
+
+    // CONTRACT_WASM_BYTES => "res/ft_bkrt_contract.wasm",
+    // STAKING_WASM_BYTES => "res/staking_bkrt_contract.wasm",
 
 }
 const FT_ID: &str = "ft";
