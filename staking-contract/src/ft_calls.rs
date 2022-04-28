@@ -153,7 +153,10 @@ impl FTActionsReceiver for Contract {
             "Cannot stake less than {} tokens",
             threshold
         );
-        assert!(stake.duration/THIRTY_DAYS >= apy.unwrap().min_duration.into(), "Invalid Duration");
+        assert!(
+            stake.duration / THIRTY_DAYS >= apy.unwrap().min_duration.into(),
+            "Invalid Duration"
+        );
 
         if let Some(mut staking_history) = self.amount_staked.get(&sender_id) {
             log!("In IF");

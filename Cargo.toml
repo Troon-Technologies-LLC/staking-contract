@@ -32,8 +32,7 @@
 # members=[
 #     "ft",
 #     # "fungible-token-contract",
-#     # "staking-contract",
-# ]
+
 [package]
 name = "fungible-token-wrapper"
 version = "0.0.1"
