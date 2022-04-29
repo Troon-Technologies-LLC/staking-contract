@@ -106,7 +106,7 @@ pub fn stimulate_get_staking_history() {
 }
 
 #[test]
-// #[ignore = "u128 is not supported"]
+#[ignore = "Time Duration of Unstaking is less than expected"]
 pub fn stimulate_unstake_fungible_token() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
@@ -393,7 +393,7 @@ pub fn check_user_staked_for_claim_reward() {
 
 #[test]
 #[should_panic(expected = "Reward can be claimed after staking for 30 days")]
-pub fn check_claim_reward() {
+pub fn check_claim_reward_duration() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
     let (root, ft, staking, alice) = init(initial_balance);
@@ -419,4 +419,125 @@ pub fn check_claim_reward() {
     let id: U128 = U128::from(1);
 
     call!(alice, staking.claim_reward(id)).assert_success();
+}
+#[test]
+#[ignore = "Time Duration of Staked tokens is lees than expected to claim reward"]
+pub fn check_claim_reward_() {
+    let amount = to_yocto("6000");
+    let initial_balance = to_yocto("6000");
+    let (root, ft, staking, alice) = init(initial_balance);
+
+    register_user(&staking.user_account);
+    call!(
+        root,
+        ft.ft_transfer(alice.account_id(), to_yocto("6000").into(), None),
+        deposit = 1
+    )
+    .assert_success();
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1).assert_success();
+
+    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
+    let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
+
+    assert_eq!(initial_balance - amount, root_balance.0);
+    assert_eq!(amount, staking_balance.0);
+
+    let ten_millis = time::Duration::from_secs(10);
+    thread::sleep(ten_millis);
+    let id: U128 = U128::from(1);
+
+    call!(alice, staking.claim_reward(id)).assert_success();
+}
+
+#[test]
+#[should_panic(expected = "No staking data with this id found for caller")]
+pub fn check_stake_id_for_un_staking() {
+    let amount = to_yocto("6000");
+    let initial_balance = to_yocto("6000");
+    let (root, ft, staking, alice) = init(initial_balance);
+
+    register_user(&staking.user_account);
+    call!(
+        root,
+        ft.ft_transfer(alice.account_id(), to_yocto("6000").into(), None),
+        deposit = 1
+    )
+    .assert_success();
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1).assert_success();
+
+    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
+    let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
+
+    assert_eq!(initial_balance - amount, root_balance.0);
+    assert_eq!(amount, staking_balance.0);
+    let id: U128 = U128::from(2);
+
+    call!(alice, staking.ft_unstake(id)).assert_success();
+}
+#[ignore = "Cannot reached at that assert"]
+#[test]
+// #[should_panic(expected = "No staking data with this id found for caller")]
+pub fn check_who_can_unstake() {
+    let amount = to_yocto("6000");
+    let initial_balance = to_yocto("12000");
+    let (root, ft, staking, alice) = init(initial_balance);
+
+    register_user(&staking.user_account);
+    call!(
+        root,
+        ft.ft_transfer(alice.account_id(), to_yocto("6000").into(), None),
+        deposit = 1
+    )
+    .assert_success();
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1).assert_success();
+    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1).assert_success();
+
+    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
+    let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
+
+    assert_eq!(0, root_balance.0);
+    assert_eq!(amount + amount, staking_balance.0);
+    let id: U128 = U128::from(1);
+
+    call!(root, staking.ft_unstake(id)).assert_success();
+}
+
+#[test]
+#[should_panic(expected = "Cannot withdraw before locked time")]
+pub fn check_duration_of_unstaking() {
+    let amount = to_yocto("6000");
+    let initial_balance = to_yocto("6000");
+    let (root, ft, staking, alice) = init(initial_balance);
+
+    register_user(&staking.user_account);
+    call!(
+        root,
+        ft.ft_transfer(alice.account_id(), to_yocto("6000").into(), None),
+        deposit = 1
+    )
+    .assert_success();
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    deposit =1).assert_success();
+
+    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
+    let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
+
+    assert_eq!(initial_balance - amount, root_balance.0);
+    assert_eq!(amount, staking_balance.0);
+    let id: U128 = U128::from(1);
+    //Time duration will no meet
+    call!(alice, staking.ft_unstake(id)).assert_success();
+}
+
+#[test]
+#[should_panic(expected = "None")]
+pub fn check_user_who_not_staker_but_unstaking() {
+    let initial_balance = to_yocto("6000");
+    let (_, _, staking, alice) = init(initial_balance);
+    let id: U128 = U128::from(1);
+    call!(alice, staking.ft_unstake(id)).assert_success();
 }
