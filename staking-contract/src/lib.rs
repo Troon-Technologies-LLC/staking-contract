@@ -176,7 +176,7 @@ impl Contract {
         let owner_stakes = self.amount_staked.get(&account_id).unwrap();
         let start = u128::from(from_index.unwrap_or(U128(0)));
         let end = min(
-            start + (limit.unwrap() as u128),
+            start + (limit.unwrap_or(0) as u128),
             owner_stakes.len().try_into().unwrap(),
         );
 
