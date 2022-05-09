@@ -1,6 +1,6 @@
 use crate::*;
 
-use near_sdk::json_types::{U128, U64};
+use near_sdk::json_types::U128;
 use near_sdk::{ext_contract, log, Gas, PromiseOrValue, PromiseResult};
 
 const BASE_GAS: Gas = Gas(5_000_000_000_000);
@@ -270,7 +270,7 @@ impl FTActionsReceiver for Contract {
         let current_time = env::block_timestamp() / 1000000000;
         // let current_time = 1653140036;
         let staked_at = stake.staked_at;
-        let duration = stake.duration / THIRTY_DAYS;
+        // let duration = stake.duration / THIRTY_DAYS;
         let amount = u128::from(stake.amount);
         let staked_by = stake.staked_by;
         // let symbol = stake.ft_symbol;

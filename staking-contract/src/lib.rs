@@ -5,8 +5,6 @@ use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 use std::cmp::min;
 use std::collections::HashMap;
-use std::ops::Sub;
-use unix_ts::Timestamp;
 
 pub type StakingId = u128;
 
@@ -111,57 +109,6 @@ impl Contract {
 
         this
     }
-
-    /*     #[payable]
-    pub fn stake(
-        &mut self,
-        ft_account_id: AccountId,
-        amount: u128,
-        duration: u64,
-        symbol: String,
-    ) {
-        let staker: AccountId = env::predecessor_account_id().try_into().unwrap();
-        let staking_id = self
-            .staking_nonce
-            .checked_add(1)
-            .expect("Exceeded u128 capacity");
-
-        let staked_at = env::block_timestamp() / 1000000000;
-
-        let stake = Stake {
-            stake_id: staking_id,
-            ft_symbol: symbol,
-            ft_account_id : ft_account_id,
-            decimal:24,
-            amount,
-            duration,
-            staked_at: staked_at,
-            staked_by : staker.clone()
-        };
-        if let Some(mut staking_history) = self.amount_staked.get(&staker) {
-            staking_history.push(stake);
-            self.amount_staked.insert(&staker, &staking_history);
-        } else {
-            let mut staking_history: Vec<Stake> = Vec::new();
-            staking_history.push(stake);
-            self.amount_staked.insert(&staker, &staking_history);
-        }
-    } */
-
-    /*     pub fn unstake (&mut self,stake_id :u128){
-        let staker_id : AccountId  = env::predecessor_account_id().try_into().unwrap();
-        let stake_history = self.amount_staked.get(&staker_id);
-
-        let stake = stake_history.unwrap().into_iter().find(|i| i.stake_id == stake_id);
-
-        let current_time =  env::block_timestamp() / 1000000000;
-        let staked_at = stake.as_ref().unwrap().staked_at;
-        let duration = stake.unwrap().duration;
-
-        assert! (current_time >= staked_at + duration, "Cannot withdraw before locked time");
-
-        //cross-contract call to transfer tokens from this contract to staker
-    } */
 
     pub fn get_staking_history(
         self,
