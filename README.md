@@ -24,7 +24,7 @@ cargo test
 
 | Function Name  | Description | Parameters | Example | Explorer Link / Response|
 | ------------- | ------------- | ------------- | ------------- | ------------- |
-| ft_transfer_call | Method to stake tokens  | {""receiver_id"": ""staking_bkrt.testnet"",""amount"": ""5000000000000000000000000000"",""msg"": ""{\""ft_symbol\"":\""BKRT\"",\""ft_account_id\"":\""ft_bkrt.testnet\"",\""decimal\"":24,\""duration\"":15778800,\""staked_by\"":\""ahsans.testnet\"",\""staking_plan\"":\""BKRTPremium6\""}""
+| ft_transfer_call | Method to stake tokens  | {""receiver_id"": ""staking_bkrt.testnet"",""amount"": ""5000000000000000000000000000"",""msg"": ""{""ft_symbol"":""BKRT"",""ft_account_id"":""ft_bkrt.testnet"",""decimal"":24,""duration"":15778800,""staked_by"":""ahsans.testnet"",""staking_plan"":""BKRTPremium6""}""
 }  | Content Cell  | Content Cell  |
 | Content Cell  | Content Cell  | Content Cell  | Content Cell  | Content Cell  |
 | Content Cell  | Content Cell  | Content Cell  | Content Cell  | Content Cell  |
