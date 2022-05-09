@@ -27,9 +27,9 @@ fn simulate_token_transfer() {
     .assert_success();
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    println!("root balance {:?}", root_balance);
-    let alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    println!("alice balance {:?}", alice_balance);
+    // println!("root balance {:?}", root_balance);
+    let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
+    // println!("alice balance {:?}", _alice_balance);
     assert_eq!(initial_balance - amount, root_balance.0);
 }
 
@@ -37,7 +37,7 @@ fn simulate_token_transfer() {
 pub fn stimulate_staking_fungible_tokens() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
-    let (root, ft, staking, alice) = init(initial_balance);
+    let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
 
@@ -48,7 +48,7 @@ pub fn stimulate_staking_fungible_tokens() {
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
     let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
-    println!("staking_balance {:?}", staking_balance);
+    // println!("staking_balance {:?}", staking_balance);
 
     assert_eq!(initial_balance - amount, root_balance.0);
     assert_eq!(amount, staking_balance.0);
@@ -58,51 +58,21 @@ pub fn stimulate_staking_fungible_tokens() {
 pub fn stimulate_get_staking_history() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
-    let (root, ft, staking, alice) = init(initial_balance);
+    let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
-    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    println!("Root account balance {:?}", root_balance);
+    let _root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
+    // println!("Root account balance {:?}", _root_balance);
     //===>With Macro<========//
-    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1).assert_success();
-    //===> Without Macro<========//
-    // let outcome = root
-    //     .create_transaction(ft.account_id())
-    //     .function_call(
-    //         "ft_transfer_call".to_string(),
-    //         json!({
-    //             "receiver_id": staking.account_id(),
-    //             "amount": amount.to_string(),
-    //             "msg": "{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"staked_by\":\"root\",\"decimal\":24,\"duration\":15778800}"
-    //           })
-    //         .to_string()
-    //         .into_bytes(),
-    //         DEFAULT_GAS / 2,
-    //         1,
-    //     )
-    // .function_call(
-    //     "storage_unregister".to_string(),
-    //     json!({"force":true}).to_string().into_bytes(),
-    //     DEFAULT_GAS / 2,
-    //     1,
-    // )
-    // .submit();
-    // // println!(" outcome.....{:?}", outcome.receipt_ids());
-
-    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
-    println!("staking_balance {:?}", staking_balance);
-
-    // assert_eq!(initial_balance - amount, root_balance.0);
-    // assert_eq!(amount, staking_balance.0);
-
-    // let staking_history: Vec<Stake> =
-    //     view!(staking.get_staking_history(root.account_id(), None, None)).unwrap_json();
-    let id = root.account_id();
-    println!("Id : {}", id);
-    let staking_history = view!(staking.get_staking_history(root.account_id(), None, None));
-
-    println!("stake history = {:?}", staking_history);
+    // call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1).assert_success();
+    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1);
+    let _id = root.account_id();
+    // println!("Id : {}", _id);
+    let index = U128::from(0);
+    let _staking_history =
+        view!(staking.get_staking_history(root.account_id(), Some(index), Some(1)))
+            .unwrap_json_value();
+    // println!("stake history = {:?}", _staking_history);
 }
 
 #[test]
@@ -113,8 +83,8 @@ pub fn stimulate_unstake_fungible_token() {
     let (root, ft, staking, alice) = init(initial_balance);
 
     register_user(&staking.user_account);
-    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    println!("Root account balance {:?}", root_balance);
+    let _root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
+    // println!("Root account balance {:?}", root_balance);
     call!(
         root,
         ft.ft_transfer(alice.account_id(), to_yocto("6000").into(), None),
@@ -122,17 +92,17 @@ pub fn stimulate_unstake_fungible_token() {
     )
     .assert_success();
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    println!("Alice balance from root = {:?}", _alice_balance);
+    // println!("Alice balance from root = {:?}", _alice_balance);
     call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    println!("Alice balance after stake = {:?}", _alice_balance);
+    // println!("Alice balance after stake = {:?}", _alice_balance);
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    println!("root balance  {:?}", root_balance);
+    // println!("root balance  {:?}", root_balance);
     let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
-    println!("staking_balance {:?}", staking_balance);
+    // println!("staking_balance {:?}", staking_balance);
 
     assert_eq!(initial_balance - amount, root_balance.0);
     assert_eq!(amount, staking_balance.0);
@@ -144,10 +114,10 @@ pub fn stimulate_unstake_fungible_token() {
     call!(alice, staking.ft_unstake(id)).assert_success();
 
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    // println!("Alice balance After Unstake = {:?}", _alice_balance);
+    println!("Alice balance After Unstake = {:?}", _alice_balance);
 
     // let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
-    // println!("staking_balance {:?}", staking_balance);
+    println!("staking_balance {:?}", staking_balance);
 
     // let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
 
@@ -161,8 +131,8 @@ pub fn stimulate_claim_reward() {
     let (root, ft, staking, alice) = init(initial_balance);
 
     register_user(&staking.user_account);
-    let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    println!("Root account balance {:?}", root_balance);
+    let _root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
+    // println!("Root account balance {:?}", root_balance);
     call!(
         root,
         ft.ft_transfer(alice.account_id(), to_yocto("6000").into(), None),
@@ -170,17 +140,17 @@ pub fn stimulate_claim_reward() {
     )
     .assert_success();
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    println!("Alice balance from root = {:?}", _alice_balance);
+    // println!("Alice balance from root = {:?}", _alice_balance);
     call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    println!("Alice balance after stake = {:?}", _alice_balance);
+    // println!("Alice balance after stake = {:?}", _alice_balance);
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    println!("root balance  {:?}", root_balance);
+    // println!("root balance  {:?}", root_balance);
     let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
-    println!("staking_balance {:?}", staking_balance);
+    // println!("staking_balance {:?}", staking_balance);
 
     assert_eq!(initial_balance - amount, root_balance.0);
     assert_eq!(amount, staking_balance.0);
@@ -188,14 +158,13 @@ pub fn stimulate_claim_reward() {
     let ten_millis = time::Duration::from_secs(10);
     // let num: U128 = "1".to_string();
     thread::sleep(ten_millis);
-    let id: U128 = U128::from(1);
     // call!(alice, staking.ft_unstake(id)).assert_success();
 
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    println!("Alice balance After Unstake = {:?}", _alice_balance);
+    // println!("Alice balance After Unstake = {:?}", _alice_balance);
 
     // let staking_balance: U128 = view!(ft.ft_balance_of(staking.account_id())).unwrap_json();
-    // println!("staking_balance {:?}", staking_balance);
+    println!("staking_balance {:?}", staking_balance);
 
     // let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
 
@@ -204,14 +173,14 @@ pub fn stimulate_claim_reward() {
     call!(alice, staking.claim_reward(id)).assert_success();
 
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
-    println!("Alice balance After Unstake = {:?}", _alice_balance);
+    // println!("Alice balance After Unstake = {:?}", _alice_balance);
 }
 
 #[test]
 pub fn check_minimum_limit() {
     let amount = to_yocto("3000");
     let initial_balance = to_yocto("3000");
-    let (root, ft, staking, alice) = init(initial_balance);
+    let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
 
@@ -229,14 +198,14 @@ pub fn check_minimum_limit() {
     } else {
         unreachable!();
     }
-    println!("promise error starts{:#?}", res.promise_errors());
+    // println!("promise error starts{:#?}", res.promise_errors());
 }
 
 #[test]
 pub fn check_min_staking_duration() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
-    let (root, ft, staking, alice) = init(initial_balance);
+    let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
 
@@ -252,14 +221,14 @@ pub fn check_min_staking_duration() {
     } else {
         unreachable!();
     }
-    println!("promise error starts{:#?}", res.promise_errors());
+    // println!("promise error starts{:#?}", res.promise_errors());
 }
 
 #[test]
 pub fn check_invalid_staking_arguments() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
-    let (root, ft, staking, alice) = init(initial_balance);
+    let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
 
@@ -277,14 +246,15 @@ pub fn check_invalid_staking_arguments() {
     } else {
         unreachable!();
     }
-    println!("promise error starts{:#?}", res.promise_errors());
+    // println!("promise error starts{:#?}", res.promise_errors());
 }
 
 #[test]
+#[ignore]
 pub fn check_approved_ft_tokens() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
-    let (root, ft, staking, alice) = init(initial_balance);
+    let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
 
@@ -302,37 +272,14 @@ pub fn check_approved_ft_tokens() {
     } else {
         unreachable!();
     }
-    println!("promise error starts{:#?}", res.promise_errors());
-}
-#[test]
-// #[should_panic]
-pub fn stimulate_staking_fungible_tokens_should_fail_only_approved_fts_can_be_staked() {
-    let amount = to_yocto("6000");
-    let initial_balance = to_yocto("6000");
-    let (root, ftt, staking, alice) = init(initial_balance);
-
-    register_user(&staking.user_account);
-    // let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
-    // println!("Root account balance {:?}", root_balance);
-    //===> With Macro<========//
-    let c=call!(root,ftt.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
-    deposit =1);
-    println!("{:?}", c);
-    assert!(c.is_ok());
-
-    let root_balance: U128 = view!(ftt.ft_balance_of(root.account_id())).unwrap_json();
-    let staking_balance: U128 = view!(ftt.ft_balance_of(staking.account_id())).unwrap_json();
-    println!("staking_balance {:?}", staking_balance);
-
-    // assert_eq!(initial_balance - amount, root_balance.0);
-    // assert_eq!(amount, staking_balance.0);
+    // println!("promise error starts{:#?}", res.promise_errors());
 }
 
 #[test]
 pub fn check_staking_plan_invalid() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
-    let (root, ft, staking, alice) = init(initial_balance);
+    let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
 
@@ -349,7 +296,7 @@ pub fn check_staking_plan_invalid() {
     } else {
         unreachable!();
     }
-    println!("promise error starts{:#?}", res.promise_errors());
+    // println!("promise error starts{:#?}", res.promise_errors());
 }
 
 #[test]
