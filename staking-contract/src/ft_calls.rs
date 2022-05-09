@@ -268,7 +268,7 @@ impl FTActionsReceiver for Contract {
             .expect("No staking data with this id found for caller");
 
         let current_time = env::block_timestamp() / 1000000000;
-        // let current_time = 1653140036;
+        //let current_time = 1653764399;
         let staked_at = stake.staked_at;
         let duration = stake.duration / THIRTY_DAYS;
         let amount = u128::from(stake.amount);
@@ -287,7 +287,7 @@ impl FTActionsReceiver for Contract {
         let difference: u64;
         if claim_history.is_none() {
             difference = (current_time - staked_at) / THIRTY_DAYS;
-            // log!("{}", difference);
+            log!("{}", difference);
             assert!(
                 difference >= 1,
                 "Reward can be claimed after staking for 30 days"
@@ -295,7 +295,7 @@ impl FTActionsReceiver for Contract {
         } else {
             let claimed_at = claim_history.clone().unwrap().last_claimed_at;
             difference = (current_time - claimed_at) / THIRTY_DAYS;
-            //log!("Current Time : {} Claimed at : {} Difference {}" ,current_time,claimed_at,difference);
+            log!("Current Time : {} Claimed at : {} Difference {}" ,current_time,claimed_at,difference);
             assert!(
                 difference >= 1,
                 "Reward can be claimed after 30 days of the last claim"
@@ -308,12 +308,13 @@ impl FTActionsReceiver for Contract {
         let apy = apy_map.get(&stake.staking_plan).unwrap();
 
         //log!("{:?}", apy);
+        //let ap = apy.interest_rate / apy.min_duration as u16;
         let ap = apy.interest_rate;
 
         let interest = (amount * (ap as u128)) / 100;
-        let actual_amount = (interest / 100) * difference as u128;
-
-        //log!("Actual amount for transfer {}", actual_amount);
+        let mut actual_amount = (interest / 100) * difference as u128;
+        actual_amount = actual_amount / apy.min_duration as u128;
+        log!("Actual amount for transfer {}", actual_amount);
 
         let memo: Option<String> = Some("Reward tokens".to_string());
         ext_ft::ft_transfer(
