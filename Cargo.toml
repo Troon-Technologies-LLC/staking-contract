@@ -9,6 +9,8 @@ edition = "2021"
 near-sdk = "4.0.0-pre.6"
 near-sdk-sim = "4.0.0-pre.6"
 
+
+
 # remember to include a line for each contract
 
 ft-bkrt-contract= {path= "./fungible-token-contract"}
