@@ -184,6 +184,8 @@ impl FTActionsReceiver for Contract {
         let staker_id: AccountId = env::predecessor_account_id().try_into().unwrap();
         let stake_history = self.amount_staked.get(&staker_id);
 
+        assert!(self.whitelist_addresses.contains(&staker_id), "Only whitelisted members can unstake tokens");
+
         let stake = stake_history
             .unwrap()
             .into_iter()
