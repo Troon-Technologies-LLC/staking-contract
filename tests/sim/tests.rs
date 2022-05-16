@@ -1,4 +1,4 @@
-use near_sdk::json_types::U128;
+use near_sdk::{borsh::BorshSerialize, json_types::U128};
 use near_sdk_sim::{call, to_yocto, transaction::ExecutionStatus, view};
 use std::{thread, time};
 
@@ -41,6 +41,10 @@ pub fn stimulate_claim_reward() {
     let (root, ft, staking, alice) = init(initial_balance);
 
     register_user(&staking.user_account);
+    //Adding users to Whitelist
+    call!(root, staking.whitelist_address_insert(alice.account_id())).assert_success();
+    call!(root, staking.whitelist_address_insert(root.account_id())).assert_success();
+
     let _root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
     // println!("Root account balance {:?}", root_balance);
     call!(
@@ -279,6 +283,9 @@ pub fn check_claim_reward_duration() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
     let (root, ft, staking, alice) = init(initial_balance);
+    //adding users to whitelist
+    call!(root, staking.whitelist_address_insert(alice.account_id())).assert_success();
+    call!(root, staking.whitelist_address_insert(root.account_id())).assert_success();
 
     register_user(&staking.user_account);
     call!(
@@ -360,6 +367,10 @@ pub fn check_stake_id_for_un_staking() {
     let (root, ft, staking, alice) = init(initial_balance);
 
     register_user(&staking.user_account);
+    //Adding users to whitelist
+    call!(root, staking.whitelist_address_insert(alice.account_id())).assert_success();
+    call!(root, staking.whitelist_address_insert(root.account_id())).assert_success();
+
     call!(
         root,
         ft.ft_transfer(alice.account_id(), to_yocto("6000").into(), None),
@@ -413,7 +424,9 @@ pub fn check_duration_of_unstaking() {
     let amount = to_yocto("6000");
     let initial_balance = to_yocto("6000");
     let (root, ft, staking, alice) = init(initial_balance);
-
+    //adding users to whitelist
+    call!(root, staking.whitelist_address_insert(alice.account_id())).assert_success();
+    call!(root, staking.whitelist_address_insert(root.account_id())).assert_success();
     register_user(&staking.user_account);
     call!(
         root,
@@ -438,7 +451,10 @@ pub fn check_duration_of_unstaking() {
 #[should_panic(expected = "None")]
 pub fn check_user_who_not_staker_but_unstaking() {
     let initial_balance = to_yocto("6000");
-    let (_, _, staking, alice) = init(initial_balance);
+    let (root, _, staking, alice) = init(initial_balance);
+    //Adding Caller to Whitelist
+    call!(root, staking.whitelist_address_insert(alice.account_id())).assert_success();
+    call!(root, staking.whitelist_address_insert(root.account_id())).assert_success();
     let id: U128 = U128::from(1);
     call!(alice, staking.ft_unstake(id)).assert_success();
 }
@@ -494,7 +510,7 @@ pub fn stimulate_unstake_fungible_token() {
 #[test]
 pub fn stimulate_get_staking_history() {
     let amount = to_yocto("6000");
-    let initial_balance = to_yocto("6000");
+    let initial_balance = to_yocto("50000");
     let (root, ft, staking, _) = init(initial_balance);
 
     register_user(&staking.user_account);
@@ -503,17 +519,21 @@ pub fn stimulate_get_staking_history() {
     //===>With Macro<========//
     // call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1).assert_success();
     call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1);
+    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1);
+
     let _id = root.account_id();
     // println!("Id : {}", _id);
     let index = U128::from(0);
     let _staking_history =
         view!(staking.get_staking_history(root.account_id(), Some(index), Some(1)))
-            .unwrap_json_value();
-    // println!("stake history = {:?}", _staking_history);
+            .unwrap_json_value()
+            .to_string();
+    println!("stake history = {:#?}", _staking_history);
+    assert!(_staking_history.contains("{\"amount\":\"6000000000000000000000000000\",\"decimal\":24,\"duration\":15778800,\"ft_account_id\":\"ft\",\"ft_symbol\":\"BKRT\",\"stake_id\":\"1\",\"staked_at\":17,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"},{\"amount\":\"6000000000000000000000000000\",\"decimal\":24,\"duration\":15778800,\"ft_account_id\":\"ft\",\"ft_symbol\":\"BKRT\",\"stake_id\":\"2\",\"staked_at\":22,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}"));
 }
 
 #[test]
-pub fn check_insert_whitelist_not_owner() {
+pub fn check_whitelist_insertion_by_user() {
     let initial_balance = to_yocto("10000");
     let (root, _ft, staking, alice) = init(initial_balance);
 
@@ -535,7 +555,7 @@ pub fn check_insert_whitelist_not_owner() {
 }
 
 #[test]
-pub fn check_insertion_whitelist_owner() {
+pub fn check_whitelist_insertion_by_owner() {
     let initial_balance = to_yocto("10000");
     let (root, _ft, staking, _alice) = init(initial_balance);
 
@@ -546,22 +566,24 @@ pub fn check_insertion_whitelist_owner() {
     )
     .assert_success();
     let _from_index = U128::from(0);
-    let x = view!(staking.whitelist_addresses_get(Some(_from_index), Some(2)));
+    let x = view!(staking.whitelist_addresses_get(Some(_from_index), Some(2))).unwrap_json_value();
 
-    println!("{:#?}", x.unwrap_json_value());
+    //assertion to check that if it contains our expected result
+    let _getting_whitelist_addresses = x.to_string();
+    assert!(_getting_whitelist_addresses.contains("root"));
 }
 
 #[test]
-pub fn check_whitelist_view_function() {
+pub fn check_whitelist_view_function_with_pagination() {
     let initial_balance = to_yocto("1000");
     let (root, _ft, staking, alice) = init(initial_balance);
 
     call!(root, staking.whitelist_address_insert(alice.account_id())).assert_success();
     call!(root, staking.whitelist_address_insert(root.account_id())).assert_success();
     let _from_index = U128::from(0);
-    let x = view!(staking.whitelist_addresses_get(Some(_from_index), Some(3)));
-
-    // if let ExecutionStatus::SuccessValue(abc)=&x.unwrap_json_value()
-    // println!("{:?}", x.logs());
-    println!("{:#?}", x.unwrap());
+    let x = view!(staking.whitelist_addresses_get(Some(_from_index), Some(3))).unwrap_json_value();
+    let _getting_whitelist_addresses = x.to_string();
+    // /assertion to check that if it contains our expected result
+    assert!(_getting_whitelist_addresses.contains("root"));
+    assert!(_getting_whitelist_addresses.contains("alice"));
 }
