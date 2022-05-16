@@ -285,6 +285,7 @@ impl FTActionsReceiver for Contract {
             staker_id.to_string(),
             "Only owner of the tokens can claim reward"
         );
+        assert!(self.whitelist_addresses.contains(&staker_id), "Only whitelisted members can claim reward tokens");
 
         let difference: u64;
         if claim_history.is_none() {
