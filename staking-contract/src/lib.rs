@@ -27,6 +27,7 @@ pub struct Contract {
     amount_staked: LookupMap<AccountId, Vec<Stake>>,
     claim_history: LookupMap<StakeId, ClaimHistory>,
     staking_nonce: u128,
+    whitelist_addresses: UnorderedSet<AccountId>,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone)]
@@ -84,6 +85,7 @@ enum StorageKeys {
     ApproveFungibleTokens,
     AmountStaked,
     ClaimHistory,
+    WhitelistAddresses,
 }
 
 #[near_bindgen]
@@ -96,6 +98,7 @@ impl Contract {
             approved_fts: LookupMap::new(StorageKeys::ApproveFungibleTokens),
             amount_staked: LookupMap::new(StorageKeys::AmountStaked),
             claim_history: LookupMap::new(StorageKeys::ClaimHistory),
+            whitelist_addresses: UnorderedSet::new(StorageKeys::WhitelistAddresses),
             staking_nonce: 0,
         };
 
@@ -123,7 +126,7 @@ impl Contract {
         let owner_stakes = self.amount_staked.get(&account_id).unwrap();
         let start = u128::from(from_index.unwrap_or(U128(0)));
         let end = min(
-            start + (limit.unwrap() as u128),
+            start + (limit.unwrap_or(0) as u128),
             owner_stakes.len().try_into().unwrap(),
         );
 
@@ -136,5 +139,35 @@ impl Contract {
 
     pub fn get_claim_history(self, stake_id: StakeId) -> Option<ClaimHistory> {
         self.claim_history.get(&stake_id)
+    }
+
+    pub fn whitelist_address_insert(&mut self, account_id: AccountId) {
+        self.assert_owner();
+        self.whitelist_addresses.insert(&account_id);
+    }
+
+    pub fn whitelist_addresses_get(
+        &self,
+        from_index: Option<U128>,
+        limit: Option<u64>,
+    ) -> Vec<AccountId> {
+        let whitelisted_addresses = self.whitelist_addresses.to_vec();
+        let mut temp: Vec<AccountId> = Vec::new();
+
+        let start = u128::from(from_index.unwrap_or(U128(0)));
+
+        let end = min(
+            start + (limit.unwrap_or(0) as u128),
+            whitelisted_addresses.len().try_into().unwrap(),
+        );
+
+        //let abc=  whitelisted_addresses[0].clone();
+        for i in start..end {
+            //log!("{:?}",abc);
+
+            temp.push(whitelisted_addresses[i as usize].clone());
+        }
+
+        temp
     }
 }

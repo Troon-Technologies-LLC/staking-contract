@@ -218,6 +218,7 @@ pub fn check_staking_plan_invalid() {
     //===> With Macro<========//
     let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium\"}".to_string()),
     deposit =1);
+    println!("alice transaction receipt{:#?}", res.promise_results());
     assert!(res.is_ok());
 
     if let ExecutionStatus::Failure(execution_error) =
@@ -489,6 +490,7 @@ pub fn stimulate_unstake_fungible_token() {
 
     assert_eq!(amount, _alice_balance.0);
 }
+
 #[test]
 pub fn stimulate_get_staking_history() {
     let amount = to_yocto("6000");
@@ -508,4 +510,58 @@ pub fn stimulate_get_staking_history() {
         view!(staking.get_staking_history(root.account_id(), Some(index), Some(1)))
             .unwrap_json_value();
     // println!("stake history = {:?}", _staking_history);
+}
+
+#[test]
+pub fn check_insert_whitelist_not_owner() {
+    let initial_balance = to_yocto("10000");
+    let (root, _ft, staking, alice) = init(initial_balance);
+
+    let whitelist_account_address = root.account_id();
+    //method called by a user who is not the owner of the contract.
+    let res = call!(
+        alice,
+        staking.whitelist_address_insert(whitelist_account_address)
+    );
+    println!("alice transaction receipt{:#?}", res.get_receipt_results());
+    //contract should panic because caller is not an onwer.
+    if let ExecutionStatus::Failure(execution_error) =
+        &res.promise_errors().remove(0).unwrap().outcome().status
+    {
+        assert!(execution_error.to_string().contains("Owner's method"));
+    } else {
+        unreachable!();
+    }
+}
+
+#[test]
+pub fn check_insertion_whitelist_owner() {
+    let initial_balance = to_yocto("10000");
+    let (root, _ft, staking, _alice) = init(initial_balance);
+
+    let whitelist_account_address = root.account_id();
+    call!(
+        root,
+        staking.whitelist_address_insert(whitelist_account_address)
+    )
+    .assert_success();
+    let _from_index = U128::from(0);
+    let x = view!(staking.whitelist_addresses_get(Some(_from_index), Some(2)));
+
+    println!("{:#?}", x.unwrap_json_value());
+}
+
+#[test]
+pub fn check_whitelist_view_function() {
+    let initial_balance = to_yocto("1000");
+    let (root, _ft, staking, alice) = init(initial_balance);
+
+    call!(root, staking.whitelist_address_insert(alice.account_id())).assert_success();
+    call!(root, staking.whitelist_address_insert(root.account_id())).assert_success();
+    let _from_index = U128::from(0);
+    let x = view!(staking.whitelist_addresses_get(Some(_from_index), Some(3)));
+
+    // if let ExecutionStatus::SuccessValue(abc)=&x.unwrap_json_value()
+    // println!("{:?}", x.logs());
+    println!("{:#?}", x.unwrap());
 }
