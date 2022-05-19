@@ -10,12 +10,19 @@ near-sdk = "4.0.0-pre.6"
 near-sdk-sim = "4.0.0-pre.6"
 
 
-
 # remember to include a line for each contract
 
 ft-bkrt-contract= {path= "./fungible-token-contract"}
 staking-bkrt-contract= {path="./staking-contract"}
 
+
+[workspace]
+# remember to include a member for each contract
+members = [
+ 
+  "fungible-token-contract",
+  "staking-contract",  
+]
 
 [profile.release]
 codegen-units = 1
@@ -25,11 +32,3 @@ lto = true
 debug = false
 panic = "abort"
 overflow-checks = true
-
-[workspace]
-# remember to include a member for each contract
-members = [
- 
-  "fungible-token-contract",
-  "staking-contract",  
-]

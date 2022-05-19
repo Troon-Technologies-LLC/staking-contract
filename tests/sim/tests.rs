@@ -1,4 +1,4 @@
-use near_sdk::{borsh::BorshSerialize, json_types::U128};
+use near_sdk::{json_types::U128};
 use near_sdk_sim::{call, to_yocto, transaction::ExecutionStatus, view};
 use std::{thread, time};
 

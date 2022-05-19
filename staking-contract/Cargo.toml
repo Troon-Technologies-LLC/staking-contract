@@ -10,15 +10,6 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 near-sdk = "4.0.0-pre.6"
-near-contract-standards = "4.0.0-pre.6"
-unix-ts = "0.2"
-# [dev-dependencies]
-# near-sdk-sim="4.0.0-pre.7"
+# near-contract-standards = "4.0.0-pre.6"
+# unix-ts = "0.2"
 
-# [profile.release]
-# codegen-units=24
-# opt-level = "z"
-# lto = true
-# debug = false
-# panic = "abort"
-# overflow-checks = true
