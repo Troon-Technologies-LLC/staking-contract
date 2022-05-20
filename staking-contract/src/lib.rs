@@ -2,7 +2,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedSet};
 use near_sdk::json_types::U128;
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
+use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault,log};
 use std::cmp::min;
 use std::collections::HashMap;
 
@@ -162,10 +162,12 @@ impl Contract {
         );
 
         //let abc=  whitelisted_addresses[0].clone();
+
         for i in start..end {
             //log!("{:?}",abc);
 
             temp.push(whitelisted_addresses[i as usize].clone());
+
         }
 
         temp
