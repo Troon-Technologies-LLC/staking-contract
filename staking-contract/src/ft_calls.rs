@@ -184,6 +184,7 @@ impl FTActionsReceiver for Contract {
         let staker_id: AccountId = env::predecessor_account_id().try_into().unwrap();
         let stake_history = self.amount_staked.get(&staker_id);
 
+
         assert!(self.whitelist_addresses.contains(&staker_id), "Only whitelisted members can unstake tokens");
 
         let stake = stake_history
@@ -285,7 +286,12 @@ impl FTActionsReceiver for Contract {
             staker_id.to_string(),
             "Only owner of the tokens can claim reward"
         );
-        assert!(self.whitelist_addresses.contains(&staker_id), "Only whitelisted members can claim reward tokens");
+
+        assert!(
+            self.whitelist_addresses.contains(&staker_id),
+            "Only whitelisted members can claim reward tokens"
+        );
+
 
         let difference: u64;
         if claim_history.is_none() {
@@ -298,7 +304,14 @@ impl FTActionsReceiver for Contract {
         } else {
             let claimed_at = claim_history.clone().unwrap().last_claimed_at;
             difference = (current_time - claimed_at) / THIRTY_DAYS;
-            log!("Current Time : {} Claimed at : {} Difference {}" ,current_time,claimed_at,difference);
+
+            log!(
+                "Current Time : {} Claimed at : {} Difference {}",
+                current_time,
+                claimed_at,
+                difference
+            );
+
             assert!(
                 difference >= 1,
                 "Reward can be claimed after 30 days of the last claim"

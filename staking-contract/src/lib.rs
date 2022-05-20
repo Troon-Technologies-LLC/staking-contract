@@ -162,10 +162,12 @@ impl Contract {
         );
 
         //let abc=  whitelisted_addresses[0].clone();
-        for i in start..end{
-          //log!("{:?}",abc);
 
-          temp.push(whitelisted_addresses[i as usize].clone());
+        for i in start..end {
+            //log!("{:?}",abc);
+
+            temp.push(whitelisted_addresses[i as usize].clone());
+
         }
 
         temp
