@@ -12,8 +12,8 @@ near-sdk-sim = "4.0.0-pre.6"
 
 # remember to include a line for each contract
 
-ft-bkrt-contract= {path= "./fungible-token-contract"}
-staking-bkrt-contract= {path="./staking-contract"}
+ft-contract= {path= "./fungible-token-contract"}
+staking-contract= {path="./staking-contract"}
 
 
 [workspace]

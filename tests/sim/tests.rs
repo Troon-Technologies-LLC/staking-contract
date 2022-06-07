@@ -55,7 +55,7 @@ pub fn stimulate_claim_reward() {
     .assert_success();
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
     // println!("Alice balance from root = {:?}", _alice_balance);
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
@@ -101,7 +101,7 @@ pub fn stimulate_staking_fungible_tokens() {
     register_user(&staking.user_account);
 
     //===> With Macro<========//
-    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1);
     assert!(res.is_ok());
 
@@ -121,7 +121,7 @@ pub fn check_minimum_limit_staking() {
     register_user(&staking.user_account);
 
     //===> With Macro<========//
-    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1);
     assert!(res.is_ok());
 
@@ -146,7 +146,7 @@ pub fn check_min_staking_duration() {
     register_user(&staking.user_account);
 
     //===> With Macro<========//
-    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1);
     assert!(res.is_ok());
 
@@ -169,7 +169,7 @@ pub fn check_invalid_staking_arguments() {
     register_user(&staking.user_account);
 
     //===> With Macro<========//
-    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_\":\"ft\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_\":\"ft\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1);
     assert!(res.is_ok());
 
@@ -195,7 +195,7 @@ pub fn check_approved_ft_tokens() {
     register_user(&staking.user_account);
 
     //===> With Macro<========//
-    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_\":\"ftt\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_\":\"ftt\",\"decimal\":24,\"duration\":1577880,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1);
     assert!(res.is_ok());
 
@@ -220,7 +220,7 @@ pub fn check_staking_plan_invalid() {
     register_user(&staking.user_account);
 
     //===> With Macro<========//
-    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium\"}".to_string()),
+    let res=call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium\"}".to_string()),
     deposit =1);
     println!("alice transaction receipt{:#?}", res.promise_results());
     assert!(res.is_ok());
@@ -252,7 +252,7 @@ pub fn check_stake_id_for_claim_reward() {
         deposit = 1
     )
     .assert_success();
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
@@ -294,7 +294,7 @@ pub fn check_claim_reward_duration() {
         deposit = 1
     )
     .assert_success();
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
@@ -323,7 +323,7 @@ pub fn check_claim_reward_() {
         deposit = 1
     )
     .assert_success();
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
@@ -377,7 +377,7 @@ pub fn check_stake_id_for_un_staking() {
         deposit = 1
     )
     .assert_success();
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
@@ -403,9 +403,9 @@ pub fn check_who_can_unstake() {
         deposit = 1
     )
     .assert_success();
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
-    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
@@ -434,7 +434,7 @@ pub fn check_duration_of_unstaking() {
         deposit = 1
     )
     .assert_success();
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
@@ -476,7 +476,7 @@ pub fn stimulate_unstake_fungible_token() {
     .assert_success();
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
     // println!("Alice balance from root = {:?}", _alice_balance);
-    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"BKRTPremium6\"}".to_string()),
+    call!(alice,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"alice\",\"staking_plan\":\"STKNPremium6\"}".to_string()),
     deposit =1).assert_success();
 
     let _alice_balance: U128 = view!(ft.ft_balance_of(alice.account_id())).unwrap_json();
@@ -517,9 +517,9 @@ pub fn stimulate_get_staking_history() {
     let _root_balance: U128 = view!(ft.ft_balance_of(root.account_id())).unwrap_json();
     // println!("Root account balance {:?}", _root_balance);
     //===>With Macro<========//
-    // call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1).assert_success();
-    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1);
-    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"BKRT\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}".to_string()), deposit=1);
+    // call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()), deposit=1).assert_success();
+    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()), deposit=1);
+    call!(root,ft.ft_transfer_call(staking.account_id(),amount.into(),None,"{\"ft_symbol\":\"STKN\",\"ft_account_id\":\"ft\",\"decimal\":24,\"duration\":15778800,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}".to_string()), deposit=1);
 
     let _id = root.account_id();
     // println!("Id : {}", _id);
@@ -529,7 +529,7 @@ pub fn stimulate_get_staking_history() {
             .unwrap_json_value()
             .to_string();
     println!("stake history = {:#?}", _staking_history);
-    assert!(_staking_history.contains("{\"amount\":\"6000000000000000000000000000\",\"decimal\":24,\"duration\":15778800,\"ft_account_id\":\"ft\",\"ft_symbol\":\"BKRT\",\"stake_id\":\"1\",\"staked_at\":17,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"},{\"amount\":\"6000000000000000000000000000\",\"decimal\":24,\"duration\":15778800,\"ft_account_id\":\"ft\",\"ft_symbol\":\"BKRT\",\"stake_id\":\"2\",\"staked_at\":22,\"staked_by\":\"root\",\"staking_plan\":\"BKRTPremium6\"}"));
+    assert!(_staking_history.contains("{\"amount\":\"6000000000000000000000000000\",\"decimal\":24,\"duration\":15778800,\"ft_account_id\":\"ft\",\"ft_symbol\":\"STKN\",\"stake_id\":\"1\",\"staked_at\":17,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"},{\"amount\":\"6000000000000000000000000000\",\"decimal\":24,\"duration\":15778800,\"ft_account_id\":\"ft\",\"ft_symbol\":\"STKN\",\"stake_id\":\"2\",\"staked_at\":22,\"staked_by\":\"root\",\"staking_plan\":\"STKNPremium6\"}"));
 }
 
 #[test]

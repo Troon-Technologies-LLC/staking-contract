@@ -14,7 +14,7 @@ pub use crate::internals::*;
 mod ft_calls;
 mod internals;
 
-// symbol + plan + duration Ex : BKRTPremium6
+// symbol + plan + duration Ex : STKNPremium6
 pub type APYKey = String;
 pub type StakeId = U128;
 
@@ -59,7 +59,7 @@ pub struct Stake {
     duration: u64,
     staked_at: u64,
     staked_by: AccountId,
-    staking_plan: String, //Ex BKRTPremium6
+    staking_plan: String,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone)]
@@ -70,7 +70,7 @@ pub struct StakeArgs {
     decimal: u8,
     duration: u64, //duration in milliseconds Ex 30 days = 2629800
     staked_by: AccountId,
-    staking_plan: String, //Ex BKRTPremium6
+    staking_plan: String, 
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone)]

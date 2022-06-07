@@ -1,4 +1,4 @@
-# Brick Trade Contracts
+# Staking Contract
 
 ## Building
 

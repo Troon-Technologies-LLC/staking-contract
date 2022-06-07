@@ -1008,7 +1008,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2022715d62ab30faffd124d40b76f4134a550a87792276512b18d63272333394"
 
 [[package]]
-name = "ft-bkrt-contract"
+name = "ft-contract"
 version = "0.1.0"
 dependencies = [
  "near-contract-standards",
@@ -1019,10 +1019,10 @@ dependencies = [
 name = "fungible-token-wrapper"
 version = "0.0.1"
 dependencies = [
- "ft-bkrt-contract",
+ "ft-contract",
  "near-sdk",
  "near-sdk-sim",
- "staking-bkrt-contract",
+ "staking-contract",
 ]
 
 [[package]]
@@ -2798,7 +2798,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
-name = "staking-bkrt-contract"
+name = "staking-contract"
 version = "0.1.0"
 dependencies = [
  "near-sdk",
